@@ -120,6 +120,12 @@ public class RectangularMap extends AbstractWorldMap{
         }
     }
 
+    public int[] showGenome(Vector2d position) {
+        ArrayList<Animal> anim = strongestAnimalsAt(position);
+        if(anim == null || anim.size() == 0) return null;
+        return anim.get(0).getGenome();
+    }
+
     public Image getImage(Vector2d position) {
         ArrayList<Animal> dominators = strongestAnimalsAt(position);
 //        System.out.println();
@@ -127,7 +133,9 @@ public class RectangularMap extends AbstractWorldMap{
             return dominators.get(0).getImage();
         }
         if(plants.containsKey(position)) {
-            return plants.get(position).getImage();
+            if(upperRight.x < 10) {
+                return plants.get(position).getImage();
+            } else { return plants.get(position).getSmallImage();}
         }
         return null;
     }
@@ -186,6 +194,16 @@ public class RectangularMap extends AbstractWorldMap{
             }
         }
         return arOut;
+    }
+
+    public ArrayList<Animal> magicEvent(ArrayList<Animal> animals) {
+        ArrayList<Animal> animalArrayList = new ArrayList<>();
+        for(int i = 0; i < animals.size(); i++) {
+            Animal nAnimal = new Animal(this, animals.get(i), upperRight);
+            place(nAnimal);
+            animalArrayList.add(nAnimal);
+        }
+        return animalArrayList;
     }
 
 }

@@ -7,4 +7,6 @@ public class Stats {
     int avgLifeLen;
     int numberOfPlants;
     int avgEnergy;
+    int avgKids;
+    int dominantGen;
 }

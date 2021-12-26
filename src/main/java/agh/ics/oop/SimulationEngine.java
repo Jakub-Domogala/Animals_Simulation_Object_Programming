@@ -2,9 +2,10 @@ package agh.ics.oop;
 
 import agh.ics.oop.gui.App;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 
 import java.util.ArrayList;
@@ -12,6 +13,10 @@ import java.util.ArrayList;
 public class SimulationEngine implements Runnable{
     private final StartParameters parameters;
     private App app;
+    public MapSimulator lMap;
+    public MapSimulator rMap;
+    public final boolean[] lPlaying = {false};
+    public final boolean[] rPlaying = {false};
 
     public SimulationEngine(StartParameters params, App application) {
         parameters = params;
@@ -20,34 +25,45 @@ public class SimulationEngine implements Runnable{
 
     @Override
     public void run() {
-        MapSimulator lMap = new MapSimulator(parameters, true, app);
-        MapSimulator rMap = new MapSimulator(parameters, false, app);
-        final boolean[] lPlaying = {false};
-        final boolean[] rPlaying = {false};
+        lMap = new MapSimulator(parameters, true, app, parameters.lMode, this);
+        rMap = new MapSimulator(parameters, false, app, parameters.rMode, this);
+
         final boolean[] keepWindow = {true};
         GridPane lGrid = lMap.getMyGrid();
         GridPane rGrid = rMap.getMyGrid();
         VBox rStats = rMap.sVbox();
         VBox lStats = lMap.sVbox();
         Button exitButton = new Button("Error Maker");
+        exitButton.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         Button startL = new Button("Start");
+        startL.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         Button startR = new Button("Start");
+        startR.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         Button stopL = new Button("Stop");
+        stopL.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         Button stopR = new Button("Stop");
+        stopR.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
+        app.openSimulationWindow(startL, startR, stopL, stopR, exitButton);
+
+
         exitButton.setOnAction(var -> {
             keepWindow[0] = false;
         });
         startL.setOnAction(var -> {
             lPlaying[0] = true;
+            lMap.isPlaying = true;
         });
         startR.setOnAction(var -> {
             rPlaying[0] = true;
+            rMap.isPlaying = true;
         });
         stopL.setOnAction(var -> {
             lPlaying[0] = false;
+            lMap.isPlaying = false;
         });
         stopR.setOnAction(var -> {
             rPlaying[0] = false;
+            rMap.isPlaying = false;
         });
 
 
@@ -62,18 +78,26 @@ public class SimulationEngine implements Runnable{
                 }
                 if(lPlaying[0]) {
                     lMap.nextDayActions();
-                    lGrid = lMap.getMyGrid();
-                    lStats = lMap.sVbox();
                 }
                 if(rPlaying[0]) {
                     rMap.nextDayActions();
-                    rGrid = rMap.getMyGrid();
-                    rStats = rMap.sVbox();
                 }
 
-                app.showMap(lGrid, rGrid, exitButton, startL, startR, stopL, stopR, lStats, rStats);
+                app.refresh(lPlaying[0], rPlaying[0]);
+                if(!app.stage.isShowing()) return;
             }
             app.closeMe();
             return;
     }
+
+    public void stopPlaying(boolean isLeft) {
+        if(isLeft) lPlaying[0] = false;
+        else rPlaying[0] = true;
+    }
+
+    public void showMagicEvent(boolean isLeft) {
+        app.showMagicEvent(isLeft);
+    }
+
+
 }

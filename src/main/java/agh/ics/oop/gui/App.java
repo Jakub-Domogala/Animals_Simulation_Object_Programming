@@ -7,35 +7,50 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import static javafx.scene.paint.Color.*;
 
 public class App extends Application {
     private RectangularMap rectangularMap;
-    private Stage stage;
+    public Stage stage;
+    private Scene scene;
     private EventHandler<ActionEvent> event;
     public StartParameters startParameters;
     private Thread engineThread;
+    public BorderPane borderPane;
+    public SimulationEngine engine;
+    private Image animationBackground;
+    private Image parametersImage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        stage = new Stage();
+        try {
+            animationBackground = new Image(new FileInputStream("src/main/resources/background2.png"));
+            parametersImage = new Image(new FileInputStream("src/main/resources/monkey.png"));
+        } catch (FileNotFoundException exception) {
+            System.out.println(exception);
+        }
+        stage = primaryStage;
         parameterScene();
     }
 
     private void openAnimationWindow() {
-        SimulationEngine engine = new SimulationEngine(startParameters, this);
+        engine = new SimulationEngine(startParameters, this);
         engineThread = new Thread(engine);
         engineThread.start();
     }
@@ -43,6 +58,7 @@ public class App extends Application {
     private void parameterScene() {
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
+        gridPane.setBackground(new Background(new BackgroundFill(Color.rgb(200, 120, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         String[] names = {
                 "Map Height", //0
                 "Map Width", //1
@@ -61,8 +77,11 @@ public class App extends Application {
         TextField[] t = new TextField[13];
         int[] def = {20, 30, 6, 9, 15, 15, 1000, 30, 1000, 1, 100, 0, 0};
         for(int i = 0; i < names.length; i++) {
-            gridPane.add(new Label(names[i]), 0, i);
+            Label label = new Label(names[i]);
+            label.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
+            gridPane.add(label, 0, i);
             t[i] = new TextField((""+def[i]));
+            t[i].setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
             gridPane.add(t[i], 1, i);
         }
 
@@ -70,6 +89,7 @@ public class App extends Application {
         gridPane.setVgap(20);
         gridPane.setHgap(30);
         Button okButton = new Button("OK");
+        okButton.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
         gridPane.add(okButton, 3, names.length);
 
 
@@ -83,48 +103,105 @@ public class App extends Application {
             startParameters = new StartParameters(def);
             openAnimationWindow();
         });
-        Scene scene = new Scene(gridPane, rgb(10, 100, 50));
-        stage.setScene(scene);
-        stage.setTitle("Set Parameters");
-        stage.show();
+        HBox hBox = new HBox(2);
+        hBox.setBackground(new Background(new BackgroundFill(Color.rgb(200, 120, 40), CornerRadii.EMPTY, Insets.EMPTY)));
+        ImageView imgV = new ImageView(parametersImage);
+        imgV.setPreserveRatio(true);
+        imgV.setFitHeight(400);
+        hBox.getChildren().addAll(gridPane, imgV);
+        hBox.setMaxSize(900, 400);
+        hBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(hBox, rgb(10, 100, 50));
+        Stage paramStage = new Stage();
+        paramStage.setScene(scene);
+        paramStage.setTitle("Set Parameters");
+        paramStage.show();
+    }
+
+    public HBox buttons(Button b1, Button b2, Button b3, Button b4, Button b5) {
+        HBox hBox = new HBox(5);
+        hBox.getChildren().addAll(b1, b2, b3, b4, b5);
+        hBox.setSpacing(140);
+        return hBox;
+    }
+
+    public HBox statHbox() {
+        HBox hBox = new HBox(3);
+        hBox.getChildren().addAll(engine.lMap.sVbox(), engine.rMap.sVbox());
+        hBox.setSpacing(300);
+        hBox.setAlignment(Pos.CENTER);
+        return hBox;
+    }
+
+    public void openSimulationWindow(Button startL, Button startR, Button stopL, Button stopR, Button exit) {
+        Platform.runLater(() -> {
+            borderPane = new BorderPane();
+            borderPane.setLeft(engine.lMap.getMyGrid());
+            borderPane.setRight(engine.rMap.getMyGrid());
+            HBox but = buttons(startL, stopL, exit, startR, stopR);
+            but.setAlignment(Pos.CENTER);
+            borderPane.setTop(but);
+            borderPane.setBottom(statHbox());
+            borderPane.setCenterShape(true);
+
+
+
+            BackgroundImage backgroundImage = new BackgroundImage(animationBackground,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.CENTER,
+                    BackgroundSize.DEFAULT);
+
+
+            borderPane.setBackground(new Background(backgroundImage));
+            scene = new Scene(borderPane,1400, 777);
+            stage.setScene(scene);
+            stage.setTitle("And so it began...");
+            stage.show();
+        });
+
 
 
     }
 
-    public void showMap(GridPane grid1, GridPane grid2, Button exi, Button startL, Button startR, Button stopL, Button stopR, VBox lStats, VBox rStats) {
+    public void refresh(boolean l, boolean r) {
         Platform.runLater(() -> {
-//            HBox h1 = new HBox(2);
-//            HBox h2 = new HBox(3);
-//            HBox h3 = new HBox(2);
-//            h1.getChildren().addAll(grid1, grid2);
-//            h1.setAlignment(Pos.CENTER);
-//            h2.getChildren().addAll(sl, exi, sr);
-//            h2.setAlignment(Pos.CENTER);
-//            h3.getChildren().addAll(lStats, rStats);
-//            h3.setAlignment(Pos.CENTER);
-//            VBox v1 = new VBox(3);
-//            v1.getChildren().addAll(h1, h2, h3);
-//            v1.setAlignment(Pos.CENTER);
-            HBox h1 = new HBox(3);
-            HBox h2 = new HBox(2);
-            HBox h3 = new HBox(2);
-            VBox v1 = new VBox(3);
-            VBox v2 = new VBox(3);
-            v1.setAlignment(Pos.CENTER);
-            v2.setAlignment(Pos.CENTER);
-            h2.getChildren().addAll(startL, stopL);
-            h3.getChildren().addAll(startR, stopR);
-            v1.getChildren().addAll(grid1, h2, lStats);
-            v2.getChildren().addAll(grid2, h3, rStats);
-            h1.getChildren().addAll(v1, exi, v2);
-            h1.setAlignment(Pos.CENTER);
-            Scene scene = new Scene(h1, 1920, 900);
-            stage.setScene(scene);
-            //h1.getChildren().clear();
-            stage.setTitle("And so it began");
-            stage.show();
+            if(l) borderPane.setLeft(engine.lMap.getMyGrid());
+            if(r) borderPane.setRight(engine.rMap.getMyGrid());
+            borderPane.setBottom(statHbox());
         });
 
+    }
+    //isLeft == true means left | isLeft == false means right
+    public void showGenome(VBox vBox, boolean isLeft) {
+        if(isLeft) {
+            borderPane.setLeft(vBox);
+        } else {
+            borderPane.setRight(vBox);
+        }
+    }
+
+    public void showMagicEvent(boolean isLeft) {
+        Platform.runLater(() -> {
+            VBox vBox = getMagicVBox();
+            if(isLeft) {
+                borderPane.setLeft(vBox);
+            } else {
+                borderPane.setRight(vBox);
+            }
+        });
+
+    }
+
+    private VBox getMagicVBox() {
+        Label label = new Label("Magic Event ocurred on this map");
+        label.setFont(new Font(50));
+        Label label1 = new Label("Press \"Start\" to continue simulation on this map");
+        label1.setFont(new Font(25));
+        VBox vBox = new VBox(2);
+        vBox.getChildren().addAll(label, label1);
+        vBox.setBackground(new Background(new BackgroundFill(Color.rgb(200, 220, 40), CornerRadii.EMPTY, Insets.EMPTY)));
+        return vBox;
     }
 
     public void closeMe() {

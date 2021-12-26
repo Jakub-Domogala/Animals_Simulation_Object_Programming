@@ -21,6 +21,7 @@ public class Animal implements  IMapElement{
     private final Genome genome;
     public int energy;
     public int lifeLen = 0;
+    public int kidsCounter = 0;
 
     //Create random Animal
     public Animal(RectangularMap map, Vector2d upperRight, int energy, int maxEnergy) {
@@ -37,6 +38,8 @@ public class Animal implements  IMapElement{
     public Animal(RectangularMap map, Animal p1, Animal p2) {
         p1.energy *= 0.75;
         p2.energy *= 0.75;
+        p1.kidsCounter++;
+        p2.kidsCounter++;
         this.map = map;
         mapDirection = randomMapDirection();
         genome = new Genome(p1.genome.genes, p2.genome.genes, p1.energy, p2.energy);
@@ -51,6 +54,7 @@ public class Animal implements  IMapElement{
         mapDirection = randomMapDirection();
         genome = p.genome;
         position = randomCords(upperRight);
+        energy = p.energy;
         addImages();
     }
 
@@ -69,6 +73,14 @@ public class Animal implements  IMapElement{
         int x = random.nextInt(upperRight.x);
         int y = random.nextInt(upperRight.y);
         return new Vector2d(x, y);
+    }
+
+    public int[] getGenome() {
+        int[] gen = new int[genome.genes.size()];
+        for(int i = 0; i < genome.genes.size(); i++) {
+            gen[i] = genome.genes.get(i);
+        }
+        return gen;
     }
 
     public MapDirection randomMapDirection() {
@@ -92,16 +104,26 @@ public class Animal implements  IMapElement{
     public Image getImage() {
         int index = (int) ((float) (energy) / maxEnergy * amountOfImages);
         if(index >= amountOfImages) return images[amountOfImages-1];
-        System.out.println(index + " index of image energy: " + energy);
+        //System.out.println(index + " index of image energy: " + energy);
         return images[index];
     }
 
     private void addImages() {
-        for(int i = 0; i < amountOfImages; i++) {
-            try {
-                images[i] = new Image(new FileInputStream("src/main/resources/animal" + i + ".png"));
-            } catch (FileNotFoundException exception) {
-                System.out.println(exception.toString());
+        if(map.upperRight.x < 10) {
+            for (int i = 0; i < amountOfImages; i++) {
+                try {
+                    images[i] = new Image(new FileInputStream("src/main/resources/animal" + i + ".png"));
+                } catch (FileNotFoundException exception) {
+                    System.out.println(exception.toString() + "animal");
+                }
+            }
+        } else {
+            for (int i = 1; i <= amountOfImages; i++) {
+                try {
+                    images[i-1] = new Image(new FileInputStream("src/main/resources/smallAnimal000" + i + ".png"));
+                } catch (FileNotFoundException exception) {
+                    System.out.println(exception.toString() + "smallAnimal");
+                }
             }
         }
     }
