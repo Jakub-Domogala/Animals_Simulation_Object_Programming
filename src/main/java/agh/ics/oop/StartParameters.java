@@ -22,8 +22,9 @@ public class StartParameters {
     public StartParameters(int[] pars) {
         mapHeight = pars[0];
         mapWidth = pars[1];
-        jgHeight = pars[2];
-        jgWidth = pars[3];
+        double ratio = (float) pars[2]/pars[3];
+        jgHeight = (int) (pars[0]*ratio);
+        jgWidth = (int) (pars[1]*ratio);
         energyPerPlant = pars[4];
         energyToCopulate = pars[5];
         startEnergy = pars[6];

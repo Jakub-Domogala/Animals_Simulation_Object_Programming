@@ -5,8 +5,10 @@ import com.sun.javafx.geom.Shape;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
@@ -104,8 +106,12 @@ public class MapSimulator{
     }
 
 
+
+
     public GridPane getMyGrid() {
-        int size = 400/map.upperRight.y;
+        int max = map.upperRight.y;
+        if(map.upperRight.x > map.upperRight.y) max = map.upperRight.x;
+        int size = 400/max;
         GridPane grid = new GridPane();
         for(int i = map.lowerLeft.x; i <= map.upperRight.x; i++) {
             for(int j = map.lowerLeft.y; j <= map.upperRight.y; j++) {

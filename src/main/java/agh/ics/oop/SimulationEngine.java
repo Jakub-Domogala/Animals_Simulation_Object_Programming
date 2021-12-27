@@ -92,7 +92,7 @@ public class SimulationEngine implements Runnable{
 
     public void stopPlaying(boolean isLeft) {
         if(isLeft) lPlaying[0] = false;
-        else rPlaying[0] = true;
+        else rPlaying[0] = false;
     }
 
     public void showMagicEvent(boolean isLeft) {

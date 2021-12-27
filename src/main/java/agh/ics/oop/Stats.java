@@ -1,12 +1,12 @@
 package agh.ics.oop;
 
 public class Stats {
-    int dayNumber;
-    int numberOfAnimalsAlive;
-    int numberOfDeadAnimals;
-    int avgLifeLen;
-    int numberOfPlants;
-    int avgEnergy;
-    int avgKids;
-    int dominantGen;
+    public int dayNumber;
+    public int numberOfAnimalsAlive;
+    public int numberOfDeadAnimals;
+    public int avgLifeLen;
+    public int numberOfPlants;
+    public int avgEnergy;
+    public int avgKids;
+    public int dominantGen;
 }
