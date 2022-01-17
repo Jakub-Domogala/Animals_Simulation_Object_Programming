@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class RectangularMap extends AbstractWorldMap{
-    public Vector2d lowerLeft; //lowerLeft of map
+    public Vector2d lowerLeft; //lowerLeft of map   // czy to może bezpiecznie być publiczne?
     public Vector2d upperRight; //upperRight of map
     public Vector2d jLowerLeft; //lowerLeft of Jungle
     public Vector2d jUpperRight; //upperRight of Jungle
@@ -56,7 +56,7 @@ public class RectangularMap extends AbstractWorldMap{
         for(int i = lowerLeft.x; i <= upperRight.x; i++) {
             for(int j = lowerLeft.y; j<= upperRight.y; j++) {
                 if(!isInJungle(new Vector2d(i, j)))
-                    if(!plants.containsKey(new Vector2d(i, j)) && !animals.containsKey(new Vector2d(i, j))) return true;
+                    if(!plants.containsKey(new Vector2d(i, j)) && !animals.containsKey(new Vector2d(i, j))) return true;    // trzy razy Pan tworzy ten sam wektor
             }
         }
         return false;
@@ -98,20 +98,20 @@ public class RectangularMap extends AbstractWorldMap{
         return new Vector2d(x, y);
     }
 
-    public ArrayList<Animal> strongestAnimalsAt(Vector2d position) {
+    public ArrayList<Animal> strongestAnimalsAt(Vector2d position) {    // polecam getStrongest...
         if(!animals.containsKey(position)) {
             return null;
         } else {
-            ArrayList<Animal> list = animals.get(position);
+            ArrayList<Animal> list = animals.get(position); // mało mówiąca nazwa
             if(list.size() == 0) return null;
             int highestEnergy = 0;
-            for(int i = 0; i < list.size(); i++) {
-                if( list.get(i).energy > highestEnergy ) {
-                    highestEnergy = list.get(i).energy;
+            for (Animal animal: list) {
+                if (animal.energy > highestEnergy) {
+                    highestEnergy = animal.energy;
                 }
             }
             ArrayList<Animal> nList = new ArrayList<>();
-            for(int i = 0; i < list.size(); i++) {
+            for(int i = 0; i < list.size(); i++) {  // j.w.
                 if( list.get(i).energy == highestEnergy ) {
                     nList.add(list.get(i));
                 }
@@ -120,13 +120,13 @@ public class RectangularMap extends AbstractWorldMap{
         }
     }
 
-    public int[] showGenome(Vector2d position) {
+    public int[] showGenome(Vector2d position) {    // czy to powinna robić mapa? nie wystarczy, że zwróci najsilniejsze zwierzę?
         ArrayList<Animal> anim = strongestAnimalsAt(position);
         if(anim == null || anim.size() == 0) return null;
         return anim.get(0).getGenome();
     }
 
-    public Image getImage(Vector2d position) {
+    public Image getImage(Vector2d position) {  // znowu - lepiej mapy w to nie mieszać
         ArrayList<Animal> dominators = strongestAnimalsAt(position);
 //        System.out.println();
         if(dominators != null && dominators.size() > 0) {
@@ -165,10 +165,10 @@ public class RectangularMap extends AbstractWorldMap{
                     if(list.size() == 0) continue;
                     if(list.get(0).energy < copulateEnergy) continue;
                     if(list.size() >= 2) {
-                        Random random = new Random();
+                        Random random = new Random();   // nowy obiekt (potencjalnie) co obrót pętli wewnętrznej
                         int p1 = random.nextInt(list.size());
                         int p2 = p1;
-                        while(p1 == p2) {
+                        while(p1 == p2) {   // do-while
                             p2 = random.nextInt(list.size());
                         }
                         Animal animal = new Animal(this, list.get(p1), list.get(p2));
@@ -176,7 +176,7 @@ public class RectangularMap extends AbstractWorldMap{
                         arOut.add(animal);
 
                     } else {
-                        ArrayList<Animal> list2 = animals.get(new Vector2d(i, j));
+                        ArrayList<Animal> list2 = animals.get(new Vector2d(i, j));  // nie opłaciłoby się z tego zrobić osobnej metody, analogicznej do strongestAnimalsAt?
                         int currEner = 0;
                         Animal animal = null;
                         for(int a = 0; a < list2.size(); a++) {
@@ -184,7 +184,7 @@ public class RectangularMap extends AbstractWorldMap{
                                 animal = list2.get(a);
                             }
                         }
-                        if(animal != null && animal.energy >= copulateEnergy) {
+                        if(animal != null && animal.energy >= copulateEnergy) { // praktycznie powtórzony kod
                             Animal nAnimal = new Animal(this, list.get(0), animal);
                             this.place(nAnimal);
                             arOut.add(nAnimal);

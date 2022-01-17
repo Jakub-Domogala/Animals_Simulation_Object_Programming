@@ -43,7 +43,7 @@ public abstract class AbstractWorldMap implements IWorldMap{
 
     //mapType = 0 means closed map, mapType != 0 means open
     public Vector2d moveToVec(Vector2d lowerLeft, Vector2d upperRight, Vector2d nPos, MapType mapType) {
-        if(mapType == MapType.Closed)
+        if(mapType == MapType.Closed)   // po to jest dziedziczenie, żeby nie robić takich if'ów
         {
             if(nPos.follows(lowerLeft) && nPos.precedes(upperRight))
             {

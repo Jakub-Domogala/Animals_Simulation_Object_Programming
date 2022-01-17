@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class Vector2d {
 
-
     public final int x;
     public final int y;
 
@@ -13,7 +12,7 @@ public class Vector2d {
         this.y = y;
     }
 
-    public Vector2d(Vector2d Nv) {
+    public Vector2d(Vector2d Nv) {  // zmienne raczej camelCasem + nazwa Nv niewiele mówi + czy jest sens robienie konstruktora kopiującego w klasie, która nie ma modyfikowalnych pól?
         this.x = Nv.x;
         this.y = Nv.y;
     }
@@ -30,9 +29,13 @@ public class Vector2d {
         return this.x >= other.x && this.y >= other.y;
     }
 
-    public Vector2d upperRight(Vector2d other) { return new Vector2d(Math.max(this.x, other.x), Math.max(this.y, other.y)); }
+    public Vector2d upperRight(Vector2d other) {
+        return new Vector2d(Math.max(this.x, other.x), Math.max(this.y, other.y));
+    }
 
-    public Vector2d lowerLeft(Vector2d other) { return new Vector2d(Math.min(this.x, other.x), Math.min(this.y, other.y)); }
+    public Vector2d lowerLeft(Vector2d other) {
+        return new Vector2d(Math.min(this.x, other.x), Math.min(this.y, other.y));
+    }
 
     public Vector2d add(Vector2d other) {
         return new Vector2d(this.x + other.x, this.y + other.y);
@@ -42,7 +45,9 @@ public class Vector2d {
         return new Vector2d(this.x - other.x, this.y - other.y);
     }
 
-    public Vector2d divide(Vector2d other) {return new Vector2d(this.x / other.x, this.y / other.y); }
+    public Vector2d divide(Vector2d other) {    // matematyka chyba nie zna czegoś takiego jak dzielenie wektorów
+        return new Vector2d(this.x / other.x, this.y / other.y);
+    }
 
     public boolean equals(Object other) {
         return other.getClass().equals(Vector2d.class) && this.x == ((Vector2d) other).x && this.y == ((Vector2d) other).y;
@@ -53,9 +58,8 @@ public class Vector2d {
     }
 
 
-
     //Returns modulo of this Vector2d based on rectangle with given lowerLeft and UpperRight
-    public Vector2d modulo(Vector2d lowerLeft, Vector2d upperRight) {
+    public Vector2d modulo(Vector2d lowerLeft, Vector2d upperRight) {   // proszę przemyśleć nazwę
         int xDiff = upperRight.x - lowerLeft.x + 1;
         int yDiff = upperRight.y - lowerLeft.y + 1;
 
@@ -63,7 +67,7 @@ public class Vector2d {
         int ny = this.y;
 
         nx -= lowerLeft.x; //move lowerLeft of this Rectangle to (0,0)
-        ny -= lowerLeft.y;
+        ny -= lowerLeft.y;  // nie byłoby czytelniej, jakby to zwinąć do jednej, albo dwóch linijek per współrzędna?
 
         nx += xDiff; //add Rectangle size to new Vector2d
         ny += yDiff;
@@ -76,9 +80,6 @@ public class Vector2d {
 
         return new Vector2d(nx, ny); //return created Vector2d
     }
-
-
-
 
 
     //Compare by Vector2D X value, Vector 2D Y value, Object

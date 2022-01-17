@@ -9,7 +9,7 @@ public class Genome {
 
     //Constructor for Adam & Ewa type Genes
     public Genome() {
-        Random random = new Random();
+        Random random = new Random();   // private static final
 
         for( int i = 0; i < length; i++) {
             int newGene = random.nextInt((int) 8);
@@ -19,7 +19,7 @@ public class Genome {
     }
 
     //Constructor for next generations Genes
-    public Genome(ArrayList<Integer> parent1, ArrayList<Integer> parent2, int energy1, int energy2) {
+    public Genome(ArrayList<Integer> parent1, ArrayList<Integer> parent2, int energy1, int energy2) {   // rodzic jest ArrayListą Integer'ów?
         Random random = new Random();
         int side = random.nextInt((int) 2);
         float proportion = ((float)energy1/(energy1 + energy2)) * length;
@@ -34,7 +34,7 @@ public class Genome {
 
     }
 
-    private ArrayList<Integer> create_child(ArrayList<Integer> parent1, ArrayList<Integer> parent2, int proportion) {
+    private ArrayList<Integer> create_child(ArrayList<Integer> parent1, ArrayList<Integer> parent2, int proportion) {   // raczej camelCase
         ArrayList<Integer> child_gene = new ArrayList<>();
         for(int i = 0; i < length; i++) {
             if(i <= proportion) {

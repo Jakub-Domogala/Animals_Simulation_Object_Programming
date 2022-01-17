@@ -1,7 +1,7 @@
 package agh.ics.oop;
 
 public class StartParameters {
-    public int mapHeight; //0
+    public int mapHeight; //0   // skoro jest publiczne, to nie powinno być finalne?
     public int mapWidth; //1
     public int jgHeight; //2
     public int jgWidth; //3

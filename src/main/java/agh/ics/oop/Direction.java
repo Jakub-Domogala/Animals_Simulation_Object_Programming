@@ -1,7 +1,7 @@
 package agh.ics.oop;
 
 public enum Direction {
-    Forward,
+    Forward,    // wartości enuma to stałe, więc raczej piszemy wielkimi literami
     ForwardRight,
     Right,
     BackwardRight,

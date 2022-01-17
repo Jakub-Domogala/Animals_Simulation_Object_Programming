@@ -29,7 +29,7 @@ public class SimulationEngine implements Runnable{
         rMap = new MapSimulator(parameters, false, app, parameters.rMode, this);
 
         final boolean[] keepWindow = {true};
-        GridPane lGrid = lMap.getMyGrid();
+        GridPane lGrid = lMap.getMyGrid();  // w tej klasie nie powinniśmy się zajmować GUI
         GridPane rGrid = rMap.getMyGrid();
         VBox rStats = rMap.sVbox();
         VBox lStats = lMap.sVbox();

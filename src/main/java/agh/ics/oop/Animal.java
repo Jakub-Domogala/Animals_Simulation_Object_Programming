@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class Animal implements  IMapElement{
+public class Animal implements IMapElement {
     private int maxEnergy;
     private final int amountOfImages = 8;
 
     private Vector2d position;
     private MapDirection mapDirection;
     private final RectangularMap map;
-    private final Image [] images = new Image[amountOfImages];
+    private final Image[] images = new Image[amountOfImages];
     private final ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
     private final Genome genome;
     public int energy;
@@ -44,7 +44,7 @@ public class Animal implements  IMapElement{
         mapDirection = randomMapDirection();
         genome = new Genome(p1.genome.genes, p2.genome.genes, p1.energy, p2.energy);
         position = p1.getPosition();
-        this.energy = (int) (p1.energy*0.3 + p2.energy*0.3);
+        this.energy = (int) (p1.energy * 0.3 + p2.energy * 0.3);
         addImages();
     }
 
@@ -77,7 +77,7 @@ public class Animal implements  IMapElement{
 
     public int[] getGenome() {
         int[] gen = new int[genome.genes.size()];
-        for(int i = 0; i < genome.genes.size(); i++) {
+        for (int i = 0; i < genome.genes.size(); i++) {
             gen[i] = genome.genes.get(i);
         }
         return gen;
@@ -92,7 +92,7 @@ public class Animal implements  IMapElement{
     }
 
     private void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
-        for(IPositionChangeObserver observer : observers) {
+        for (IPositionChangeObserver observer : observers) {
             observer.positionChanged(oldPosition, newPosition);
         }
     }
@@ -103,13 +103,13 @@ public class Animal implements  IMapElement{
 
     public Image getImage() {
         int index = (int) ((float) (energy) / maxEnergy * amountOfImages);
-        if(index >= amountOfImages) return images[amountOfImages-1];
+        if (index >= amountOfImages) return images[amountOfImages - 1];
         //System.out.println(index + " index of image energy: " + energy);
         return images[index];
     }
 
     private void addImages() {
-        if(map.upperRight.x < 10) {
+        if (map.upperRight.x < 10) {
             for (int i = 0; i < amountOfImages; i++) {
                 try {
                     images[i] = new Image(new FileInputStream("src/main/resources/animal" + i + ".png"));
@@ -120,7 +120,7 @@ public class Animal implements  IMapElement{
         } else {
             for (int i = 1; i <= amountOfImages; i++) {
                 try {
-                    images[i-1] = new Image(new FileInputStream("src/main/resources/smallAnimal000" + i + ".png"));
+                    images[i - 1] = new Image(new FileInputStream("src/main/resources/smallAnimal000" + i + ".png"));
                 } catch (FileNotFoundException exception) {
                     System.out.println(exception.toString() + "smallAnimal");
                 }
@@ -133,26 +133,25 @@ public class Animal implements  IMapElement{
         Random random = new Random();
         int choice = random.nextInt(32);
         choice = genome.genes.get(choice);
-        if(choice == 0) {
-            if(null != map.moveToVec(map.lowerLeft, map.upperRight, position.add(mapDirection.toUnitVector()), map.mapType)) {
+        if (choice == 0) {
+            if (null != map.moveToVec(map.lowerLeft, map.upperRight, position.add(mapDirection.toUnitVector()), map.mapType)) {
                 Vector2d oldPosition = position;
                 position = map.moveToVec(map.lowerLeft, map.upperRight, position.add(mapDirection.toUnitVector()), map.mapType);
                 map.positionChanged(oldPosition, position, this);
             }
+        } else if (choice == 4) {   // za miesiąc Pan będzie pamiętał, czemu tu jest akurat 4?
+            if (null != map.moveToVec(map.lowerLeft, map.upperRight, position.subtract(mapDirection.toUnitVector()), map.mapType)) {
+                Vector2d oldPosition = position;
+                position = map.moveToVec(map.lowerLeft, map.upperRight, position.subtract(mapDirection.toUnitVector()), map.mapType);
+                map.positionChanged(oldPosition, position, this);
+                positionChanged(oldPosition, position);
+            }
         } else {
-            if(choice == 4) {
-                if(null != map.moveToVec(map.lowerLeft, map.upperRight, position.subtract(mapDirection.toUnitVector()), map.mapType)) {
-                    Vector2d oldPosition = position;
-                    position = map.moveToVec(map.lowerLeft, map.upperRight, position.subtract(mapDirection.toUnitVector()), map.mapType);
-                    map.positionChanged(oldPosition, position, this);
-                    positionChanged(oldPosition, position);
-                }
-            } else {
-                for(int i = 0; i <= choice; i++) {
-                    mapDirection.next();
-                }
+            for (int i = 0; i <= choice; i++) {
+                mapDirection.next();
             }
         }
+
         energy--;
 
     }
