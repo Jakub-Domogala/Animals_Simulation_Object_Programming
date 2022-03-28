@@ -1,5 +1,5 @@
 # Animals_Simulation---Object_Programming_First_Project
-
+### Implemented in Java using JavaFX
 ## Short Description
 This project is a simulation of animals behavior when equipped with tiny genome and will to survive.
 
