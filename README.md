@@ -1,9 +1,13 @@
 # Animals_Simulation---Object_Programming_First_Project
 ### Implemented in Java using JavaFX
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/78169141/160680743-debd4ef7-2a36-4fc2-b941-8e5ff15dd01a.gif)
+
 ## Short Description
 This project is a simulation of animals behavior when equipped with tiny genome and will to survive.
 
 ## Openning window
+
 Openning window lets user set all variables of the animation
 
 ![image](https://user-images.githubusercontent.com/78169141/160482161-46a2d7fc-f161-4605-b559-065478370a70.png)
